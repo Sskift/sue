@@ -1,0 +1,268 @@
+/* css/lottery.css — 抽奖专属：滚轮、号码框、粒子 */
+
+/* 大号单号码显示（一等奖） */
+.number-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 1.5vw, 24px);
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(48px, 9vw, 140px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text);
+  text-shadow:
+    0 0 12px var(--neon-cyan),
+    0 0 32px rgba(61, 245, 255, 0.6),
+    0 0 64px rgba(160, 92, 255, 0.4);
+}
+
+.number-display .label {
+  color: var(--neon-violet);
+  font-size: clamp(28px, 5vw, 80px);
+  text-shadow: 0 0 12px rgba(160, 92, 255, 0.8);
+}
+
+.number-display .prefix {
+  color: var(--neon-cyan);
+  font-size: clamp(32px, 5.5vw, 90px);
+  text-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.number-display .suffix {
+  color: var(--neon-violet);
+  font-size: clamp(28px, 5vw, 80px);
+  text-shadow: 0 0 12px rgba(160, 92, 255, 0.8);
+}
+
+/* Era reel（前/后） */
+.era-reel {
+  display: inline-block;
+  width: 1.1em;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: baseline;
+  position: relative;
+}
+.era-reel .era-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.era-reel .era-strip span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+}
+.era-reel.locked {
+  animation: lock-flash 0.5s ease;
+}
+
+/* Hex reels — 三位十六进制 */
+.hex-reels {
+  display: inline-flex;
+  gap: 0.05em;
+  vertical-align: baseline;
+}
+.hex-reel {
+  display: inline-block;
+  width: 0.7em;
+  height: 1em;
+  overflow: hidden;
+  position: relative;
+}
+.hex-reel .hex-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+.hex-reel .hex-strip span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+}
+.hex-reel.locked {
+  animation: lock-flash 0.5s ease;
+}
+
+@keyframes lock-flash {
+  0% { filter: brightness(2.5) drop-shadow(0 0 20px var(--neon-cyan)); }
+  50% { filter: brightness(1.8); }
+  100% { filter: brightness(1); }
+}
+
+/* 10 格栅格 */
+.grid-10 {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(12px, 1.5vw, 20px);
+  padding: clamp(16px, 2vh, 32px) 0;
+}
+
+.cell {
+  position: relative;
+  background: rgba(8, 14, 40, 0.55);
+  border: 1px solid rgba(61, 245, 255, 0.35);
+  padding: clamp(8px, 1.2vh, 16px) clamp(6px, 1vw, 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  box-shadow:
+    inset 0 0 20px rgba(61, 245, 255, 0.08),
+    0 0 18px rgba(61, 245, 255, 0.12);
+  overflow: hidden;
+}
+.cell::before {
+  content: attr(data-idx);
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  font-family: var(--mono);
+  font-size: clamp(10px, 0.9vw, 13px);
+  color: var(--neon-cyan);
+  opacity: 0.7;
+  letter-spacing: 2px;
+}
+.cell .cell-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25em;
+  color: var(--text);
+  font-size: clamp(28px, 3.8vw, 56px);
+  text-shadow:
+    0 0 10px var(--neon-cyan-soft),
+    0 0 20px rgba(160, 92, 255, 0.35);
+}
+.cell .cell-display .era-reel {
+  color: var(--neon-violet);
+  font-size: 0.6em;
+}
+.cell .cell-display .prefix {
+  color: var(--neon-cyan);
+  font-size: 0.7em;
+}
+
+.cell.locked {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    inset 0 0 30px rgba(61, 245, 255, 0.25),
+    0 0 40px rgba(61, 245, 255, 0.45);
+}
+
+/* 粒子（一等奖揭晓后） */
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  overflow: hidden;
+}
+.confetti .piece {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 14px;
+  background: var(--neon-cyan);
+  opacity: 0.9;
+  animation: fall 3s linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* 阶段提示 */
+.stage-hint {
+  font-family: var(--mono);
+  color: var(--neon-cyan);
+  letter-spacing: 6px;
+  font-size: clamp(14px, 1.4vw, 18px);
+  text-transform: uppercase;
+  opacity: 0.85;
+  text-shadow: 0 0 8px var(--neon-cyan-soft);
+}
+
+/* Prize 选择 radio 组 */
+.prize-select {
+  display: inline-flex;
+  gap: 12px;
+  font-family: var(--mono);
+  letter-spacing: 3px;
+}
+.prize-select label {
+  padding: 10px 22px;
+  border: 1px solid rgba(61, 245, 255, 0.4);
+  cursor: pointer;
+  color: var(--text-dim);
+  transition: all 0.2s;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.prize-select label:hover {
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+}
+.prize-select input { display: none; }
+.prize-select input:checked + span {
+  color: var(--neon-cyan);
+}
+.prize-select label:has(input:checked) {
+  border-color: var(--neon-cyan);
+  background: rgba(61, 245, 255, 0.12);
+  box-shadow: 0 0 16px rgba(61, 245, 255, 0.3);
+  color: var(--neon-cyan);
+}
+
+/* 历史表格 */
+.history {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid rgba(61, 245, 255, 0.3);
+  background: rgba(5, 6, 26, 0.6);
+  padding: 16px;
+  font-family: var(--mono);
+  font-size: 14px;
+  margin: 16px 0;
+}
+.history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.history th, .history td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(61, 245, 255, 0.15);
+  letter-spacing: 1px;
+}
+.history th {
+  color: var(--neon-cyan);
+  position: sticky;
+  top: 0;
+  background: rgba(5, 6, 26, 0.95);
+}
+.history td.prize-first { color: var(--neon-pink); font-weight: 700; }
+.history td.prize-second { color: var(--neon-cyan); font-weight: 700; }
+.history td.prize-third { color: var(--text); }
+
+.summary {
+  display: flex;
+  gap: 32px;
+  font-family: var(--mono);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.summary strong {
+  color: var(--neon-cyan);
+  font-weight: 700;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>十连抽 · 0x7EA</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/lottery.css">
+</head>
+<body>
+<a class="back" href="index.html">← 返回</a>
+
+<div class="page">
+  <div class="topbar">
+    <span class="brand">0x7EA // <span id="prize-label">十连抽</span></span>
+    <span class="subtitle" id="stage-hint">SPACE 或 点击 开始</span>
+  </div>
+
+  <div class="grid-10" id="grid"></div>
+
+  <div class="btn-row" style="justify-content:center; margin: 2vh 0;">
+    <button class="btn primary" id="btn-start">开 始</button>
+    <button class="btn primary" id="btn-confirm">确 认 并 归 档</button>
+    <button class="btn" id="btn-back">返 回 主 页</button>
+  </div>
+
+  <div class="statusbar">
+    <span>// TEN-SHOT DRAW · 10 numbers per round</span>
+    <span class="hint">SPACE 切换开始/停止 · ENTER 归档 · ESC 返回</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/hex.js"></script>
+<script src="js/state.js"></script>
+<script src="js/roller.js"></script>
+<script src="js/ten.js"></script>
+</body>
+</html>

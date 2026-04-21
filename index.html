@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>0x7EA · 奇异A纪元 抽奖系统</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/lottery.css">
+</head>
+<body>
+<div class="code-deco left">
+// mission: Save the Future Without Warmth
+fix_future(logic = true, warmth = true);
+restore_humanity = true;
+inject_emotion(kindness);
+rewrite_world(delete_coldness);
+return love;
+</div>
+<div class="code-deco right">
+[target] = college_student
+[era]    = 0x7EA
+[pool]   = 1024
+[status] = STANDBY_
+</div>
+
+<div class="page">
+  <div class="topbar">
+    <span class="brand">0x7EA // 奇异A纪元</span>
+    <span class="subtitle">清华大学软件学院 · 2026 学生节 LOTTERY SYSTEM</span>
+  </div>
+
+  <div class="hero">
+    <div class="stage-hint">TIME-TRAVEL LOTTERY · READY</div>
+    <h1 class="glitch title-main" data-text="奇异A纪元">奇异A纪元</h1>
+    <div class="title-sub">7EA，是我们还在的证明</div>
+
+    <div class="btn-row" style="margin-top: 4vh;">
+      <a class="btn primary" href="draw-single.html">抽 · 一等奖</a>
+      <a class="btn" href="draw-ten.html?prize=second">抽 · 二等奖（十连）</a>
+      <a class="btn" href="draw-ten.html?prize=third">抽 · 三等奖（十连）</a>
+      <a class="btn violet" href="admin.html">历史 · 管理</a>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span id="pool-status">// pool: loading...</span>
+    <span class="hint">SPACE 开始 / 停止 · ESC 返回 · R 重置 (admin)</span>
+  </div>
+</div>
+
+<script src="js/hex.js"></script>
+<script src="js/state.js"></script>
+<script>
+  function updateStatus() {
+    const total = 1024;
+    const remain = State.remaining();
+    const used = total - remain;
+    const first = State.count('first');
+    const second = State.count('second');
+    const third = State.count('third');
+    document.getElementById('pool-status').textContent =
+      `// pool: ${remain} / ${total} remaining · drawn: 一=${first}/2 · 二=${second}/10 · 三=${third}/30`;
+  }
+  updateStatus();
+  window.addEventListener('storage', updateStatus);
+  window.addEventListener('focus', updateStatus);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') return;
+  });
+</script>
+</body>
+</html>

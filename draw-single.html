@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>抽 · 一等奖 · 0x7EA</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/lottery.css">
+</head>
+<body>
+<a class="back" href="index.html">← 返回</a>
+
+<div class="code-deco left">
+[prize] = FIRST
+[quota] = 2
+[mode]  = single
+</div>
+
+<div class="page">
+  <div class="topbar">
+    <span class="brand">0x7EA // 一等奖</span>
+    <span class="subtitle" id="stage-hint">SPACE 或 点击 开始</span>
+  </div>
+
+  <div class="hero">
+    <div class="number-display">
+      <span class="prefix">公元</span>
+      <span class="era-reel" id="era-reel"></span>
+      <span>&nbsp;0x</span>
+      <span class="hex-reels">
+        <span class="hex-reel" id="hex-0"></span>
+        <span class="hex-reel" id="hex-1"></span>
+        <span class="hex-reel" id="hex-2"></span>
+      </span>
+      <span class="suffix">&nbsp;纪元</span>
+    </div>
+
+    <div class="btn-row" style="margin-top: 6vh;">
+      <button class="btn primary" id="btn-start">开 始</button>
+      <button class="btn violet" id="btn-next">继 续 · 抽取年份</button>
+      <button class="btn primary" id="btn-again">再 抽 一 个</button>
+      <button class="btn" id="btn-back">返 回 主 页</button>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span>// FIRST PRIZE · 1-of-1 draw</span>
+    <span class="hint">SPACE 切换开始/停止 · ESC 返回</span>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+<div class="toast" id="toast"></div>
+
+<script src="js/hex.js"></script>
+<script src="js/state.js"></script>
+<script src="js/roller.js"></script>
+<script src="js/single.js"></script>
+</body>
+</html>

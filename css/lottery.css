@@ -132,6 +132,13 @@
   text-shadow: 0 0 10px rgba(160, 92, 255, 0.6);
 }
 
+.cell-line-top .era-reel {
+  color: var(--neon-pink);
+  text-shadow:
+    0 0 10px var(--neon-pink),
+    0 0 20px rgba(255, 62, 166, 0.6);
+}
+
 .cell-line-bottom {
   font-size: clamp(32px, 4.6vw, 68px);
   color: var(--neon-cyan);

@@ -16,11 +16,15 @@
   document.getElementById('prize-label').textContent = prizeLabel;
 
   // 构建 10 个 cell（两行结构：上行「公元 + 前/后」，下行「0x + 三位」）
+  // 三等奖：编号跨轮累计。例如第一轮 01-10、第二轮 11-20、第三轮 21-30。
+  // 基于 state 里已有的 third 记录数推导起始偏移，刷新 / 重进也能接着编号。
+  const numberOffset = prize === 'third' ? State.count('third') : 0;
   const cells = [];
   for (let i = 0; i < 10; i++) {
     const cell = document.createElement('div');
     cell.className = 'cell';
-    cell.setAttribute('data-idx', String(i + 1).padStart(2, '0'));
+    const num = numberOffset + i + 1;
+    cell.setAttribute('data-idx', String(num).padStart(2, '0'));
     cell.innerHTML = `
       <div class="cell-display">
         <div class="cell-line cell-line-top">

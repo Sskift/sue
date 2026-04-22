@@ -139,19 +139,18 @@ body::after {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  color: var(--neon-pink);
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 .glitch::before {
-  color: var(--neon-pink);
   transform: translate(2px, 0);
-  clip-path: inset(0 0 55% 0);
-  mix-blend-mode: screen;
+  clip-path: inset(0 0 50% 0);
   animation: glitch-a 3.2s infinite steps(1);
 }
 .glitch::after {
-  color: var(--neon-cyan);
   transform: translate(-2px, 0);
-  clip-path: inset(55% 0 0 0);
-  mix-blend-mode: screen;
+  clip-path: inset(50% 0 0 0);
   animation: glitch-b 2.7s infinite steps(1);
 }
 @keyframes glitch-a {

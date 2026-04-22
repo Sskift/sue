@@ -101,7 +101,8 @@
 
   // ---- HexReel ----
   // 一列 0-F，始终显示为大写字符。
-  function HexReel(el) {
+  // 可选 initialDigit（0-15）指定初始定格显示的值（默认 0）。
+  function HexReel(el, initialDigit) {
     this.el = el;
     this.strip = document.createElement('div');
     this.strip.className = 'hex-strip';
@@ -117,6 +118,17 @@
     this.speed = 0;
     this.running = false;
     this.raf = null;
+
+    // 延迟到布局完成后把 strip 位移到 initialDigit
+    if (typeof initialDigit === 'number' && initialDigit > 0) {
+      requestAnimationFrame(() => {
+        this._measure();
+        if (this.itemH > 0) {
+          this.offset = initialDigit * this.itemH;
+          this.strip.style.transform = 'translateY(' + (-this.offset) + 'px)';
+        }
+      });
+    }
   }
 
   HexReel.prototype._measure = function () {
@@ -177,9 +189,10 @@
     });
   };
 
-  /** 归零动画：重新滚动然后缓停到 0。与 stopAt(0) 类似但不再加 .locked 闪光。 */
-  HexReel.prototype.reset = function (delay) {
+  /** 归零动画：重新滚动然后缓停到指定目标 digit（默认 0）。 */
+  HexReel.prototype.reset = function (delay, targetDigit) {
     delay = delay || 0;
+    const target = (typeof targetDigit === 'number') ? targetDigit : 0;
     return new Promise(resolve => {
       setTimeout(() => {
         this.el.classList.remove('locked');
@@ -197,12 +210,12 @@
         };
         requestAnimationFrame(tick);
 
-        // 250ms 后缓停到下一个 0
+        // 250ms 后缓停到目标
         setTimeout(() => {
           spinning = false;
           const currentIdx = Math.ceil(this.offset / this.itemH);
           let idx = currentIdx + 6;
-          while (idx % 16 !== 0) idx++;
+          while (idx % 16 !== target) idx++;
           const finalOffset = idx * this.itemH;
           const startOffset = this.offset;
           const dur = 900;
@@ -215,7 +228,7 @@
             if (t < 1) requestAnimationFrame(animate);
             else {
               this.offset = finalOffset;
-              resolve(0);
+              resolve(target);
             }
           };
           requestAnimationFrame(animate);
@@ -276,13 +289,17 @@
     return [(h >> 8) & 0xF, (h >> 4) & 0xF, h & 0xF];
   }
 
-  /** 归零过渡：让所有 reel 反向滚动回 0，然后 reload，无黑幕。 */
-  function resetAndReload(reels) {
-    const promises = (reels || []).map((r, i) => r.reset(i * 40));
-    Promise.all(promises).then(() => {
-      setTimeout(() => location.reload(), 350);
+  /** 归零过渡：让所有 reel 反向滚动到目标值，完成后 resolve。
+   *  tasks: [{ reel, target? }, ...]；target 未传则为 0；EraReel 无需 target。
+   *  返回 Promise，等所有 reel 归位后再由调用方继续下一步，避免页面 reload 闪屏。 */
+  function resetReels(tasks) {
+    const promises = (tasks || []).map((t, i) => {
+      const delay = i * 40;
+      if (typeof t.target === 'number') return t.reel.reset(delay, t.target);
+      return t.reel.reset(delay);
     });
+    return Promise.all(promises);
   }
 
-  global.Roller = { EraReel, HexReel, hexDigits, resetAndReload };
+  global.Roller = { EraReel, HexReel, hexDigits, resetReels };
 })(window);

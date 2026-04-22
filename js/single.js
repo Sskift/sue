@@ -14,7 +14,9 @@
   ];
 
   const eraReel = new Roller.EraReel(eraEl);
-  const hexReels = hexEls.map(el => new Roller.HexReel(el));
+  // 初始定格为 0x7EA：高=7, 中=E, 低=A
+  const INITIAL_DIGITS = [0x7, 0xE, 0xA];
+  const hexReels = hexEls.map((el, i) => new Roller.HexReel(el, INITIAL_DIGITS[i]));
 
   let stage = 'era-ready';
   let chosenEra = null;
@@ -89,10 +91,23 @@
   }
 
   function next() {
-    if (stage === 'hex-done') {
-      setHint('归零中 · 准备下一名');
-      Roller.resetAndReload([eraReel, ...hexReels]);
-    }
+    if (stage !== 'hex-done' || locked) return;
+    locked = true;
+    setHint('归零中 · 准备下一名');
+    // 归零到 0x7EA：高=7, 中=E, 低=A
+    Roller.resetReels([
+      { reel: eraReel },
+      { reel: hexReels[0], target: INITIAL_DIGITS[0] },
+      { reel: hexReels[1], target: INITIAL_DIGITS[1] },
+      { reel: hexReels[2], target: INITIAL_DIGITS[2] },
+    ]).then(() => {
+      // in-place 重置状态，无 reload、无闪屏
+      chosenEra = null;
+      chosenNumber = null;
+      stage = 'era-ready';
+      locked = false;
+      setHint('方向抽取 · 待命');
+    });
   }
 
   function celebrate() {

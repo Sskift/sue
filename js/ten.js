@@ -13,36 +13,49 @@
   document.getElementById('prize-label').textContent = prizeLabel;
 
   // 三等奖编号跨轮累计（01-10 → 11-20 → 21-30），二等奖固定 01-10
-  const numberOffset = prize === 'third' ? State.count('third') : 0;
+  // 每次进入下一轮时重新计算 numberOffset
+  const INITIAL_DIGITS = [0x7, 0xE, 0xA];
   const cells = [];
-  for (let i = 0; i < 10; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    const num = numberOffset + i + 1;
-    cell.setAttribute('data-idx', String(num).padStart(2, '0'));
-    cell.innerHTML = `
-      <div class="cell-display">
-        <div class="cell-line cell-line-top">
-          <span>公元</span>
-          <span class="era-reel"></span>
+
+  function buildCells() {
+    grid.innerHTML = '';
+    cells.length = 0;
+    const numberOffset = prize === 'third' ? State.count('third') : 0;
+    for (let i = 0; i < 10; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const num = numberOffset + i + 1;
+      cell.setAttribute('data-idx', String(num).padStart(2, '0'));
+      cell.innerHTML = `
+        <div class="cell-display">
+          <div class="cell-line cell-line-top">
+            <span>公元</span>
+            <span class="era-reel"></span>
+          </div>
+          <div class="cell-line cell-line-bottom">
+            <span>0x</span>
+            <span class="hex-reel"></span>
+            <span class="hex-reel"></span>
+            <span class="hex-reel"></span>
+          </div>
         </div>
-        <div class="cell-line cell-line-bottom">
-          <span>0x</span>
-          <span class="hex-reel"></span>
-          <span class="hex-reel"></span>
-          <span class="hex-reel"></span>
-        </div>
-      </div>
-    `;
-    grid.appendChild(cell);
-    const eraEl = cell.querySelector('.era-reel');
-    const hexEls = cell.querySelectorAll('.hex-reel');
-    cells.push({
-      el: cell,
-      era: new Roller.EraReel(eraEl),
-      hex: [new Roller.HexReel(hexEls[0]), new Roller.HexReel(hexEls[1]), new Roller.HexReel(hexEls[2])],
-    });
+      `;
+      grid.appendChild(cell);
+      const eraEl = cell.querySelector('.era-reel');
+      const hexEls = cell.querySelectorAll('.hex-reel');
+      cells.push({
+        el: cell,
+        era: new Roller.EraReel(eraEl),
+        hex: [
+          new Roller.HexReel(hexEls[0], INITIAL_DIGITS[0]),
+          new Roller.HexReel(hexEls[1], INITIAL_DIGITS[1]),
+          new Roller.HexReel(hexEls[2], INITIAL_DIGITS[2]),
+        ],
+      });
+    }
   }
+
+  buildCells();
 
   let stage = 'ready'; // ready | rolling | done
   let result = null;
@@ -102,18 +115,33 @@
   }
 
   function confirm() {
-    if (stage !== 'done' || !result) return;
+    if (stage !== 'done' || !result || locked) return;
+    locked = true;
     State.markDrawn(result, prize);
     showToast(`已归档 ${result.length} 个${prizeLabel}号码`, false);
-    setTimeout(() => {
-      setHint('归零中 · 准备下一轮');
-      const reels = [];
-      cells.forEach(c => {
-        c.el.classList.remove('locked');
-        reels.push(c.era, c.hex[0], c.hex[1], c.hex[2]);
-      });
-      Roller.resetAndReload(reels);
-    }, 900);
+    setHint('归零中 · 准备下一轮');
+    // 号码池不足则直接显示完成，不再进入下一轮
+    const nextRemain = State.remaining();
+    const tasks = [];
+    cells.forEach(c => {
+      c.el.classList.remove('locked');
+      // 每格都归零到 0x7EA
+      tasks.push({ reel: c.era });
+      tasks.push({ reel: c.hex[0], target: INITIAL_DIGITS[0] });
+      tasks.push({ reel: c.hex[1], target: INITIAL_DIGITS[1] });
+      tasks.push({ reel: c.hex[2], target: INITIAL_DIGITS[2] });
+    });
+    Roller.resetReels(tasks).then(() => {
+      // 三等奖：重建 cell 以刷新 data-idx 到下一段编号（11-20 / 21-30）
+      if (prize === 'third') {
+        buildCells();
+      }
+      result = null;
+      stage = 'ready';
+      locked = false;
+      setHint(`${prizeLabel} · 待命`);
+      if (nextRemain < 10) showToast(`警告：剩余号码仅 ${nextRemain} 个`, true);
+    });
   }
 
   document.addEventListener('keydown', (e) => {

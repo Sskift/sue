@@ -81,14 +81,15 @@ body::after {
 .code-deco.left { left: 2vw; top: 55vh; }
 .code-deco.right { right: 2vw; top: 15vh; text-align: right; }
 
-/* 页面容器 */
+/* 页面容器（针对 9:5 / 1800×1000 投影屏设计，视口按 vw/vh 自适应） */
 .page {
   position: relative;
-  min-height: 100vh;
+  width: 100%;
+  height: 100vh;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  padding: clamp(24px, 3vh, 48px) clamp(32px, 4vw, 80px);
+  padding: clamp(20px, 2.8vh, 40px) clamp(28px, 3.5vw, 64px);
 }
 
 /* 顶栏 */

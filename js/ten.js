@@ -15,7 +15,7 @@
   const prizeLabel = prize === 'second' ? '二等奖' : '三等奖';
   document.getElementById('prize-label').textContent = prizeLabel;
 
-  // 构建 10 个 cell
+  // 构建 10 个 cell（两行结构：上行「公元 + 前/后」，下行「0x + 三位」）
   const cells = [];
   for (let i = 0; i < 10; i++) {
     const cell = document.createElement('div');
@@ -23,14 +23,16 @@
     cell.setAttribute('data-idx', String(i + 1).padStart(2, '0'));
     cell.innerHTML = `
       <div class="cell-display">
-        <span class="prefix">公元</span>
-        <span class="era-reel"></span>
-        <span>&nbsp;0x</span>
-        <span class="hex-reels">
+        <div class="cell-line cell-line-top">
+          <span>公元</span>
+          <span class="era-reel"></span>
+        </div>
+        <div class="cell-line cell-line-bottom">
+          <span>0x</span>
           <span class="hex-reel"></span>
           <span class="hex-reel"></span>
           <span class="hex-reel"></span>
-        </span>
+        </div>
       </div>
     `;
     grid.appendChild(cell);

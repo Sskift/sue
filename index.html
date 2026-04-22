@@ -35,15 +35,14 @@ return love;
 
     <div class="btn-row" style="margin-top: 4vh;">
       <a class="btn primary" href="draw-single.html">抽 · 一等奖</a>
-      <a class="btn" href="draw-ten.html?prize=second">抽 · 二等奖（十连）</a>
-      <a class="btn" href="draw-ten.html?prize=third">抽 · 三等奖（十连）</a>
-      <a class="btn violet" href="admin.html">历史 · 管理</a>
+      <a class="btn" href="draw-ten.html?prize=second">抽 · 二等奖</a>
+      <a class="btn" href="draw-ten.html?prize=third">抽 · 三等奖</a>
     </div>
   </div>
 
   <div class="statusbar">
     <span id="pool-status">// pool: loading...</span>
-    <span class="hint">SPACE 开始 / 停止 · ESC 返回 · R 重置 (admin)</span>
+    <span class="hint">SPACE 开始/停止 · ESC 返回 · 按 A 查看后台</span>
   </div>
 </div>
 
@@ -53,7 +52,6 @@ return love;
   function updateStatus() {
     const total = 1024;
     const remain = State.remaining();
-    const used = total - remain;
     const first = State.count('first');
     const second = State.count('second');
     const third = State.count('third');
@@ -64,8 +62,9 @@ return love;
   window.addEventListener('storage', updateStatus);
   window.addEventListener('focus', updateStatus);
 
+  // 隐藏入口：按 A 键打开后台管理页
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') return;
+    if (e.key === 'a' || e.key === 'A') location.href = 'admin.html';
   });
 </script>
 </body>

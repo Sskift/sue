@@ -1,116 +1,86 @@
-/* css/lottery.css — 抽奖专属：滚轮、号码框、粒子 */
+/* css/lottery.css — 抽奖专属：滚轮、号码框、粒子
+   注意：reel 高度统一用 1.25em，避免字形上下沿被 overflow:hidden 裁掉。 */
 
-/* 大号单号码显示（一等奖） */
-.number-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(12px, 1.5vw, 24px);
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: clamp(48px, 9vw, 140px);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: var(--text);
-  text-shadow:
-    0 0 12px var(--neon-cyan),
-    0 0 32px rgba(61, 245, 255, 0.6),
-    0 0 64px rgba(160, 92, 255, 0.4);
-}
-
-.number-display .label {
-  color: var(--neon-violet);
-  font-size: clamp(28px, 5vw, 80px);
-  text-shadow: 0 0 12px rgba(160, 92, 255, 0.8);
-}
-
-.number-display .prefix {
-  color: var(--neon-cyan);
-  font-size: clamp(32px, 5.5vw, 90px);
-  text-shadow: 0 0 12px var(--neon-cyan);
-}
-
-.number-display .suffix {
-  color: var(--neon-violet);
-  font-size: clamp(28px, 5vw, 80px);
-  text-shadow: 0 0 12px rgba(160, 92, 255, 0.8);
-}
-
-/* Era reel（前/后） */
-.era-reel {
-  display: inline-block;
-  width: 1.1em;
-  height: 1em;
-  overflow: hidden;
-  vertical-align: baseline;
-  position: relative;
-}
-.era-reel .era-strip {
-  display: flex;
-  flex-direction: column;
-  will-change: transform;
-}
-.era-reel .era-strip span {
-  display: block;
-  height: 1em;
-  line-height: 1;
-  text-align: center;
-}
-.era-reel.locked {
-  animation: lock-flash 0.5s ease;
-}
-
-/* Hex reels — 三位十六进制 */
-.hex-reels {
-  display: inline-flex;
-  gap: 0.05em;
-  vertical-align: baseline;
-}
+/* === 通用 Reel 样式（所有场景共享） === */
+.era-reel,
 .hex-reel {
   display: inline-block;
-  width: 0.7em;
-  height: 1em;
+  height: 1.25em;
   overflow: hidden;
   position: relative;
+  vertical-align: middle;
 }
-.hex-reel .hex-strip {
+.era-reel { width: 1.15em; }
+.hex-reel { width: 0.72em; }
+
+.era-strip,
+.hex-strip {
   display: flex;
   flex-direction: column;
   will-change: transform;
 }
-.hex-reel .hex-strip span {
+.era-strip span,
+.hex-strip span {
   display: block;
-  height: 1em;
-  line-height: 1;
+  height: 1.25em;
+  line-height: 1.25em;
   text-align: center;
 }
+.era-reel.locked,
 .hex-reel.locked {
   animation: lock-flash 0.5s ease;
 }
-
 @keyframes lock-flash {
   0% { filter: brightness(2.5) drop-shadow(0 0 20px var(--neon-cyan)); }
   50% { filter: brightness(1.8); }
   100% { filter: brightness(1); }
 }
 
-/* 10 格栅格 */
+/* === 一等奖大号显示 === */
+.number-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.2vw, 20px);
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(44px, 8vw, 128px);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: var(--text);
+  text-shadow:
+    0 0 12px var(--neon-cyan),
+    0 0 32px rgba(61, 245, 255, 0.6),
+    0 0 64px rgba(160, 92, 255, 0.4);
+  padding: 0.15em 0;
+}
+.number-display .label,
+.number-display .suffix {
+  color: var(--neon-violet);
+  font-size: 0.6em;
+  text-shadow: 0 0 12px rgba(160, 92, 255, 0.8);
+}
+.number-display .prefix {
+  color: var(--neon-cyan);
+  font-size: 0.65em;
+  text-shadow: 0 0 12px var(--neon-cyan);
+}
+
+/* === 十连抽 · 5×2 栅格 === */
 .grid-10 {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: clamp(12px, 1.5vw, 20px);
-  padding: clamp(16px, 2vh, 32px) 0;
+  gap: clamp(10px, 1.3vw, 18px);
+  padding: clamp(12px, 1.5vh, 24px) 0;
 }
 
 .cell {
   position: relative;
   background: rgba(8, 14, 40, 0.55);
   border: 1px solid rgba(61, 245, 255, 0.35);
-  padding: clamp(8px, 1.2vh, 16px) clamp(6px, 1vw, 12px);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
@@ -120,36 +90,54 @@
   box-shadow:
     inset 0 0 20px rgba(61, 245, 255, 0.08),
     0 0 18px rgba(61, 245, 255, 0.12);
+  padding: clamp(14px, 1.8vh, 22px) clamp(10px, 1.2vw, 16px);
   overflow: hidden;
 }
+
 .cell::before {
   content: attr(data-idx);
   position: absolute;
-  top: 6px;
-  left: 10px;
+  top: 8px;
+  left: 12px;
   font-family: var(--mono);
   font-size: clamp(10px, 0.9vw, 13px);
   color: var(--neon-cyan);
   opacity: 0.7;
   letter-spacing: 2px;
+  z-index: 2;
 }
-.cell .cell-display {
+
+/* 两行结构，彻底避免遮挡 */
+.cell-display {
   display: flex;
-  align-items: baseline;
-  gap: 0.25em;
-  color: var(--text);
-  font-size: clamp(28px, 3.8vw, 56px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 0.6vh, 10px);
+  width: 100%;
+}
+
+.cell-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1em;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.cell-line-top {
+  font-size: clamp(18px, 2.2vw, 32px);
+  color: var(--neon-violet);
+  text-shadow: 0 0 10px rgba(160, 92, 255, 0.6);
+}
+
+.cell-line-bottom {
+  font-size: clamp(32px, 4.6vw, 68px);
+  color: var(--neon-cyan);
   text-shadow:
     0 0 10px var(--neon-cyan-soft),
-    0 0 20px rgba(160, 92, 255, 0.35);
-}
-.cell .cell-display .era-reel {
-  color: var(--neon-violet);
-  font-size: 0.6em;
-}
-.cell .cell-display .prefix {
-  color: var(--neon-cyan);
-  font-size: 0.7em;
+    0 0 20px rgba(61, 245, 255, 0.4);
 }
 
 .cell.locked {
@@ -159,7 +147,7 @@
     0 0 40px rgba(61, 245, 255, 0.45);
 }
 
-/* 粒子（一等奖揭晓后） */
+/* 粒子 */
 .confetti {
   position: fixed;
   inset: 0;
@@ -192,37 +180,7 @@
   text-shadow: 0 0 8px var(--neon-cyan-soft);
 }
 
-/* Prize 选择 radio 组 */
-.prize-select {
-  display: inline-flex;
-  gap: 12px;
-  font-family: var(--mono);
-  letter-spacing: 3px;
-}
-.prize-select label {
-  padding: 10px 22px;
-  border: 1px solid rgba(61, 245, 255, 0.4);
-  cursor: pointer;
-  color: var(--text-dim);
-  transition: all 0.2s;
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-}
-.prize-select label:hover {
-  color: var(--neon-cyan);
-  border-color: var(--neon-cyan);
-}
-.prize-select input { display: none; }
-.prize-select input:checked + span {
-  color: var(--neon-cyan);
-}
-.prize-select label:has(input:checked) {
-  border-color: var(--neon-cyan);
-  background: rgba(61, 245, 255, 0.12);
-  box-shadow: 0 0 16px rgba(61, 245, 255, 0.3);
-  color: var(--neon-cyan);
-}
-
-/* 历史表格 */
+/* admin 历史表格 */
 .history {
   flex: 1;
   overflow: auto;
@@ -255,7 +213,8 @@
 
 .summary {
   display: flex;
-  gap: 32px;
+  flex-wrap: wrap;
+  gap: 24px;
   font-family: var(--mono);
   color: var(--text-dim);
   letter-spacing: 3px;

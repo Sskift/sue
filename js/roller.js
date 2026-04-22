@@ -183,5 +183,17 @@
     return [(h >> 8) & 0xF, (h >> 4) & 0xF, h & 0xF];
   }
 
-  global.Roller = { EraReel, HexReel, hexDigits };
+  /** 归零过渡：单向淡入黑幕，然后 reload，无频闪。 */
+  function fadeReload(label) {
+    const overlay = document.createElement('div');
+    overlay.className = 'fade-out';
+    overlay.innerHTML = `<div class="reset-label">${label || '// RESET'}</div>`;
+    document.body.appendChild(overlay);
+    // 强制一次 reflow，确保 transition 生效
+    void overlay.offsetWidth;
+    overlay.classList.add('on');
+    setTimeout(() => location.reload(), 900);
+  }
+
+  global.Roller = { EraReel, HexReel, hexDigits, fadeReload };
 })(window);

@@ -28,26 +28,20 @@ return love;
     <span class="subtitle">清华大学软件学院 · 2026 学生节 LOTTERY SYSTEM</span>
   </div>
 
-  <div class="hero">
-    <div class="stage-hint">TIME-TRAVEL LOTTERY · READY</div>
+  <div class="hero hero-simple">
     <h1 class="glitch title-main" data-text="奇异A纪元">奇异A纪元</h1>
     <div class="title-sub">7EA，是我们还在的证明</div>
-
-    <div class="btn-row" style="margin-top: 4vh;">
-      <a class="btn primary" href="draw-single.html">抽 · 一等奖</a>
-      <a class="btn" href="draw-ten.html?prize=second">抽 · 二等奖</a>
-      <a class="btn" href="draw-ten.html?prize=third">抽 · 三等奖</a>
-    </div>
   </div>
 
   <div class="statusbar">
     <span id="pool-status">// pool: loading...</span>
-    <span class="hint">SPACE 开始/停止 · ESC 返回 · 按 A 查看后台</span>
+    <span class="hint">press H for manual</span>
   </div>
 </div>
 
 <script src="js/hex.js"></script>
 <script src="js/state.js"></script>
+<script src="js/manual.js"></script>
 <script>
   function updateStatus() {
     const total = 1024;
@@ -62,9 +56,54 @@ return love;
   window.addEventListener('storage', updateStatus);
   window.addEventListener('focus', updateStatus);
 
-  // 隐藏入口：按 A 键打开后台管理页
+  Manual.init([
+    { keys: ['1'], desc: '进入一等奖抽奖' },
+    { keys: ['2'], desc: '进入二等奖抽奖（十连）' },
+    { keys: ['3'], desc: '进入三等奖抽奖（十连）' },
+    { keys: ['A'], desc: '进入历史记录（后台管理 / 导出 / 重置）' },
+    { keys: ['H'], desc: '显示本手册（再按一次关闭）' },
+  ], [
+    {
+      title: '一等奖流程 · 共 2 名（每名 1 次）',
+      steps: [
+        '主页 <kbd>1</kbd> → 进入一等奖页',
+        '<kbd>Space</kbd> 开始方向滚动 → 再按 <kbd>Space</kbd> 定格「前/后」，之后自动进入年份阶段',
+        '<kbd>Space</kbd> 开始年份滚动 → 再按 <kbd>Space</kbd> 定格三位十六进制（号码自动入库）',
+        '<kbd>Enter</kbd> 进入归零过渡，准备抽第 2 名',
+        '重复一次以上步骤，2 名一等奖完成',
+      ],
+    },
+    {
+      title: '二等奖流程 · 共 10 名（1 轮十连）',
+      steps: [
+        '主页 <kbd>2</kbd> → 进入二等奖十连页',
+        '<kbd>Space</kbd> 开始滚动（10 格同时）→ 再按 <kbd>Space</kbd> 依次定格',
+        '<kbd>Enter</kbd> 归档本轮 10 个号码，过渡归零，二等奖完成',
+      ],
+    },
+    {
+      title: '三等奖流程 · 共 30 名（3 轮十连，编号 01-30 累计）',
+      steps: [
+        '主页 <kbd>3</kbd> → 进入三等奖十连页（本轮编号 01-10）',
+        '<kbd>Space</kbd> 开始 → <kbd>Space</kbd> 定格 → <kbd>Enter</kbd> 归档',
+        '过渡归零后自动进入下一轮（编号 11-20） → 再按 <kbd>3</kbd> 返回即可，或直接按 <kbd>Space</kbd> 继续',
+        '重复第 2 轮 → 第 3 轮（编号 21-30），合计 30 人',
+      ],
+    },
+    {
+      title: '其他',
+      steps: [
+        '<kbd>A</kbd> 任意时刻进入历史记录 / 导出 CSV / 重置',
+        '历史页 <kbd>B</kbd> 返回主页；<kbd>H</kbd> 打开本手册',
+      ],
+    },
+  ]);
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'a' || e.key === 'A') location.href = 'admin.html';
+    if (e.key === '1') location.href = 'draw-single.html';
+    else if (e.key === '2') location.href = 'draw-ten.html?prize=second';
+    else if (e.key === '3') location.href = 'draw-ten.html?prize=third';
+    else if (e.key === 'a' || e.key === 'A') location.href = 'admin.html';
   });
 </script>
 </body>

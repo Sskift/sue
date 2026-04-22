@@ -7,25 +7,18 @@
 <link rel="stylesheet" href="css/lottery.css">
 </head>
 <body>
-<a class="back" href="index.html">← 返回</a>
 
 <div class="page">
   <div class="topbar">
     <span class="brand">0x7EA // <span id="prize-label">十连抽</span></span>
-    <span class="subtitle" id="stage-hint">SPACE 或 点击 开始</span>
+    <span class="subtitle" id="stage-hint">待命</span>
   </div>
 
   <div class="grid-10" id="grid"></div>
 
-  <div class="btn-row" style="justify-content:center; margin: 2vh 0;">
-    <button class="btn primary" id="btn-start">开 始</button>
-    <button class="btn primary" id="btn-confirm">确 认 并 归 档</button>
-    <button class="btn" id="btn-back">返 回 主 页</button>
-  </div>
-
   <div class="statusbar">
     <span>// TEN-SHOT DRAW · 10 numbers per round</span>
-    <span class="hint">SPACE 切换开始/停止 · ENTER 归档 · ESC 返回</span>
+    <span class="hint">press H for manual</span>
   </div>
 </div>
 
@@ -34,6 +27,39 @@
 <script src="js/hex.js"></script>
 <script src="js/state.js"></script>
 <script src="js/roller.js"></script>
+<script src="js/manual.js"></script>
 <script src="js/ten.js"></script>
+<script>
+  Manual.init([
+    { keys: ['Space'], desc: '开始 / 停止滚动（10 格同时）' },
+    { keys: ['Enter'], desc: '停止后：确认并归档本轮 10 个号码（归零过渡）' },
+    { keys: ['A'], desc: '进入历史记录（后台管理 / 导出 / 重置）' },
+    { keys: ['B'], desc: '返回主页' },
+    { keys: ['H'], desc: '显示本手册（再按一次关闭）' },
+  ], [
+    {
+      title: '十连抽流程（每轮）',
+      steps: [
+        '<kbd>Space</kbd> 开始 10 格同时滚动',
+        '<kbd>Space</kbd> 所有格依次定格',
+        '<kbd>Enter</kbd> 归档本轮 10 个号码 → 过渡归零',
+      ],
+    },
+    {
+      title: '二等奖共 10 名（1 轮）',
+      steps: [
+        '本页完成 1 轮十连 → 二等奖完成',
+      ],
+    },
+    {
+      title: '三等奖共 30 名（3 轮，编号 01-30 累计）',
+      steps: [
+        '第 1 轮：编号 01-10',
+        '过渡归零后自动进入第 2 轮：编号 11-20',
+        '再一次：第 3 轮编号 21-30',
+      ],
+    },
+  ]);
+</script>
 </body>
 </html>

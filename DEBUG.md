@@ -32,11 +32,14 @@ open -na "Google Chrome" --args --new-window --window-size=1800,1000 "file:///Us
 | **直接访问** | 浏览器地址栏手动打 `admin.html`（或 `file://.../sue/admin.html`） |
 | **DevTools** | F12 → Application 标签 → Storage → Local Storage → key `lottery:drawn:v1`，能直接看到 JSON 原始数据 |
 
-### 后台功能
-- 查看全部中奖记录（含时间戳）
-- **导出 CSV**（Excel / 腾讯文档直接打开）
-- 删单条记录（主持人误抽可用）
-- **R 键** 一键重置（二次确认）
+### 后台功能（全键盘操作）
+- **↑ / ↓**：选择条目（选中行有青色高亮 + 外框）
+- **Home / End**：跳到第一条 / 最后一条
+- **D** / **Delete** / **Backspace**：删除当前选中（二次确认）
+- **E**：导出 CSV 到下载目录
+- **R**：一键重置（两次确认）
+- **B**：返回主页
+- **H**：显示快捷键手册（再按一次关闭）
 
 ### 想要「本地自动写文件」
 浏览器出于安全限制无法直接写磁盘，但可以：

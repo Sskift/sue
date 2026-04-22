@@ -1,12 +1,9 @@
-// js/ten.js — 十连抽
+// js/ten.js — 十连抽（纯键盘）
 
 (function () {
   'use strict';
 
   const stageHint = document.getElementById('stage-hint');
-  const btnStart = document.getElementById('btn-start');
-  const btnConfirm = document.getElementById('btn-confirm');
-  const btnBack = document.getElementById('btn-back');
   const toast = document.getElementById('toast');
   const grid = document.getElementById('grid');
 
@@ -15,9 +12,7 @@
   const prizeLabel = prize === 'second' ? '二等奖' : '三等奖';
   document.getElementById('prize-label').textContent = prizeLabel;
 
-  // 构建 10 个 cell（两行结构：上行「公元 + 前/后」，下行「0x + 三位」）
-  // 三等奖：编号跨轮累计。例如第一轮 01-10、第二轮 11-20、第三轮 21-30。
-  // 基于 state 里已有的 third 记录数推导起始偏移，刷新 / 重进也能接着编号。
+  // 三等奖编号跨轮累计（01-10 → 11-20 → 21-30），二等奖固定 01-10
   const numberOffset = prize === 'third' ? State.count('third') : 0;
   const cells = [];
   for (let i = 0; i < 10; i++) {
@@ -70,9 +65,7 @@
         return;
       }
       stage = 'rolling';
-      setHint(`十连抽 · ${prizeLabel} · SPACE 或 点击 停止`);
-      btnStart.textContent = '停 止';
-      btnStart.classList.add('danger');
+      setHint(`${prizeLabel} · 穿梭中`);
       cells.forEach((c, i) => {
         setTimeout(() => {
           c.era.start();
@@ -88,7 +81,6 @@
       if (!result) { showToast('号码池不足', true); locked = false; return; }
 
       const promises = [];
-      // 从左上到右下顺位停止，每个 cell 约 80ms 间隔
       cells.forEach((c, i) => {
         const n = result[i];
         const digits = Roller.hexDigits(n.hex);
@@ -103,36 +95,28 @@
       Promise.all(promises).then(() => {
         stage = 'done';
         locked = false;
-        setHint('号码已锁定 · 点「确认并归档」完成本轮');
-        btnStart.style.display = 'none';
-        btnConfirm.style.display = '';
+        setHint('号码已锁定 · 待归档');
       });
       return;
     }
   }
 
   function confirm() {
-    if (!result) return;
+    if (stage !== 'done' || !result) return;
     State.markDrawn(result, prize);
     showToast(`已归档 ${result.length} 个${prizeLabel}号码`, false);
-    setTimeout(() => location.reload(), 1200);
+    setTimeout(() => Roller.fadeReload('// RESET · 准备下一轮'), 900);
   }
-
-  btnStart.addEventListener('click', handleAction);
-  btnConfirm.addEventListener('click', confirm);
-  btnBack.addEventListener('click', () => location.href = 'index.html');
 
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Space') { e.preventDefault(); handleAction(); }
-    else if (e.key === 'Enter' && stage === 'done') { e.preventDefault(); confirm(); }
-    else if (e.key === 'Escape') location.href = 'index.html';
+    else if (e.key === 'Enter') { e.preventDefault(); confirm(); }
+    else if (e.key === 'b' || e.key === 'B') location.href = 'index.html';
+    else if (e.key === 'a' || e.key === 'A') location.href = 'admin.html';
   });
 
-  // 初始化
-  setHint(`就绪 · 本轮：${prizeLabel}（10 个）· SPACE 或 点击 开始`);
-  btnConfirm.style.display = 'none';
+  setHint(`${prizeLabel} · 待命`);
 
-  // 剩余数量提醒
   const remain = State.remaining();
   if (remain < 10) showToast(`警告：剩余号码仅 ${remain} 个`, true);
 })();

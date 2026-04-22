@@ -13,19 +13,24 @@
   document.getElementById('prize-label').textContent = prizeLabel;
 
   // 三等奖编号跨轮累计（01-10 → 11-20 → 21-30），二等奖固定 01-10
-  // 每次进入下一轮时重新计算 numberOffset
+  // 初始构建一次，之后只就地更新 data-idx，不重建 DOM 以避免闪烁
   const INITIAL_DIGITS = [0x7, 0xE, 0xA];
   const cells = [];
+
+  function updateCellIndices() {
+    const numberOffset = prize === 'third' ? State.count('third') : 0;
+    cells.forEach((c, i) => {
+      const num = numberOffset + i + 1;
+      c.el.setAttribute('data-idx', String(num).padStart(2, '0'));
+    });
+  }
 
   function buildCells() {
     grid.innerHTML = '';
     cells.length = 0;
-    const numberOffset = prize === 'third' ? State.count('third') : 0;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
-      const num = numberOffset + i + 1;
-      cell.setAttribute('data-idx', String(num).padStart(2, '0'));
       cell.innerHTML = `
         <div class="cell-display">
           <div class="cell-line cell-line-top">
@@ -53,6 +58,7 @@
         ],
       });
     }
+    updateCellIndices();
   }
 
   buildCells();
@@ -132,9 +138,9 @@
       tasks.push({ reel: c.hex[2], target: INITIAL_DIGITS[2] });
     });
     Roller.resetReels(tasks).then(() => {
-      // 三等奖：重建 cell 以刷新 data-idx 到下一段编号（11-20 / 21-30）
+      // 三等奖：就地更新 data-idx 到下一段编号（11-20 / 21-30），不重建 DOM
       if (prize === 'third') {
-        buildCells();
+        updateCellIndices();
       }
       result = null;
       stage = 'ready';

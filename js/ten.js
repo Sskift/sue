@@ -105,7 +105,15 @@
     if (stage !== 'done' || !result) return;
     State.markDrawn(result, prize);
     showToast(`已归档 ${result.length} 个${prizeLabel}号码`, false);
-    setTimeout(() => Roller.fadeReload('// RESET · 准备下一轮'), 900);
+    setTimeout(() => {
+      setHint('归零中 · 准备下一轮');
+      const reels = [];
+      cells.forEach(c => {
+        c.el.classList.remove('locked');
+        reels.push(c.era, c.hex[0], c.hex[1], c.hex[2]);
+      });
+      Roller.resetAndReload(reels);
+    }, 900);
   }
 
   document.addEventListener('keydown', (e) => {

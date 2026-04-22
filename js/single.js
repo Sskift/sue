@@ -90,7 +90,8 @@
 
   function next() {
     if (stage === 'hex-done') {
-      Roller.fadeReload('// RESET · 再抽一个');
+      setHint('归零中 · 准备下一名');
+      Roller.resetAndReload([eraReel, ...hexReels]);
     }
   }
 

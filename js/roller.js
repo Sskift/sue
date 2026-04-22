@@ -177,23 +177,112 @@
     });
   };
 
+  /** 归零动画：重新滚动然后缓停到 0。与 stopAt(0) 类似但不再加 .locked 闪光。 */
+  HexReel.prototype.reset = function (delay) {
+    delay = delay || 0;
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.el.classList.remove('locked');
+        // 先快速滚起来
+        this._measure();
+        const spinSpeed = 28;
+        let spinning = true;
+        const tick = () => {
+          if (!spinning) return;
+          this.offset += spinSpeed;
+          const total = this.itemH * 16;
+          if (this.itemH > 0) this.offset = this.offset % total;
+          this.strip.style.transform = 'translateY(' + (-this.offset) + 'px)';
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+
+        // 250ms 后缓停到下一个 0
+        setTimeout(() => {
+          spinning = false;
+          const currentIdx = Math.ceil(this.offset / this.itemH);
+          let idx = currentIdx + 6;
+          while (idx % 16 !== 0) idx++;
+          const finalOffset = idx * this.itemH;
+          const startOffset = this.offset;
+          const dur = 900;
+          const startTs = performance.now();
+          const ease = t => 1 - Math.pow(1 - t, 3);
+          const animate = (now) => {
+            const t = Math.min(1, (now - startTs) / dur);
+            const cur = startOffset + (finalOffset - startOffset) * ease(t);
+            this.strip.style.transform = 'translateY(' + (-cur) + 'px)';
+            if (t < 1) requestAnimationFrame(animate);
+            else {
+              this.offset = finalOffset;
+              resolve(0);
+            }
+          };
+          requestAnimationFrame(animate);
+        }, 250);
+      }, delay);
+    });
+  };
+
+  /** 归零动画：EraReel 也滚一下然后停回默认（展示「前」）。 */
+  EraReel.prototype.reset = function (delay) {
+    delay = delay || 0;
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.el.classList.remove('locked');
+        this._measure();
+        const spinSpeed = 22;
+        let spinning = true;
+        const tick = () => {
+          if (!spinning) return;
+          this.offset += spinSpeed;
+          const total = this.itemH * 2;
+          if (this.itemH > 0) this.offset = this.offset % total;
+          this.strip.style.transform = 'translateY(' + (-this.offset) + 'px)';
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+
+        setTimeout(() => {
+          spinning = false;
+          // 停回「前」（偶数 index）
+          const currentIdx = Math.ceil(this.offset / this.itemH);
+          let idx = currentIdx + 4;
+          while (idx % 2 !== 0) idx++;
+          const finalOffset = idx * this.itemH;
+          const startOffset = this.offset;
+          const dur = 800;
+          const startTs = performance.now();
+          const ease = t => 1 - Math.pow(1 - t, 3);
+          const animate = (now) => {
+            const t = Math.min(1, (now - startTs) / dur);
+            const cur = startOffset + (finalOffset - startOffset) * ease(t);
+            this.strip.style.transform = 'translateY(' + (-cur) + 'px)';
+            if (t < 1) requestAnimationFrame(animate);
+            else {
+              this.offset = finalOffset;
+              resolve();
+            }
+          };
+          requestAnimationFrame(animate);
+        }, 250);
+      }, delay);
+    });
+  };
+
   // ---- 工具 ----
   /** 分解一个 hex number 为三位 0-15 数组 [高,中,低]。 */
   function hexDigits(h) {
     return [(h >> 8) & 0xF, (h >> 4) & 0xF, h & 0xF];
   }
 
-  /** 归零过渡：单向淡入黑幕，然后 reload，无频闪。 */
-  function fadeReload(label) {
-    const overlay = document.createElement('div');
-    overlay.className = 'fade-out';
-    overlay.innerHTML = `<div class="reset-label">${label || '// RESET'}</div>`;
-    document.body.appendChild(overlay);
-    // 强制一次 reflow，确保 transition 生效
-    void overlay.offsetWidth;
-    overlay.classList.add('on');
-    setTimeout(() => location.reload(), 900);
+  /** 归零过渡：让所有 reel 反向滚动回 0，然后 reload，无黑幕。 */
+  function resetAndReload(reels) {
+    const promises = (reels || []).map((r, i) => r.reset(i * 40));
+    Promise.all(promises).then(() => {
+      setTimeout(() => location.reload(), 350);
+    });
   }
 
-  global.Roller = { EraReel, HexReel, hexDigits, fadeReload };
+  global.Roller = { EraReel, HexReel, hexDigits, resetAndReload };
 })(window);

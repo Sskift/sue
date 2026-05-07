@@ -1,4 +1,4 @@
-// js/single.js — 一等奖抽奖流程（纯键盘 · 无可见按键提示）
+// js/single.js — 特等奖抽奖流程（纯键盘 · 无可见按键提示）
 
 (function () {
   'use strict';
@@ -82,7 +82,7 @@
       Promise.all(hexReels.map((r, i) => r.stopAt(digits[i], i * 220))).then(() => {
         stage = 'hex-done';
         locked = false;
-        State.markDrawn(chosenNumber, 'first');
+        State.markDrawn(chosenNumber, 'grand');
         setHint('中奖号码 · ' + Hex.formatFull(chosenNumber));
         celebrate();
       });

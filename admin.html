@@ -46,8 +46,8 @@
 <script src="js/state.js"></script>
 <script src="js/manual.js"></script>
 <script>
-  const PRIZE_NAMES = { first: '一等奖', second: '二等奖', third: '三等奖' };
-  const PRIZE_CLASS = { first: 'prize-first', second: 'prize-second', third: 'prize-third' };
+  const PRIZE_NAMES = { grand: '特等奖', first: '一等奖', second: '二等奖', third: '三等奖' };
+  const PRIZE_CLASS = { grand: 'prize-grand', first: 'prize-first', second: 'prize-second', third: 'prize-third' };
 
   let selectedIdx = -1;
 
@@ -78,15 +78,17 @@
       tbody.appendChild(tr);
     });
 
+    const grand = State.count('grand');
     const first = State.count('first');
     const second = State.count('second');
     const third = State.count('third');
     const total = State.count();
     document.getElementById('summary').innerHTML = `
       <span>// 总计 <strong>${total}</strong> / 42</span>
-      <span>一等奖 <strong>${first}</strong> / 2</span>
+      <span>特等奖 <strong>${grand}</strong> / 2</span>
+      <span>一等奖 <strong>${first}</strong> / 10</span>
       <span>二等奖 <strong>${second}</strong> / 10</span>
-      <span>三等奖 <strong>${third}</strong> / 30</span>
+      <span>三等奖 <strong>${third}</strong> / 20</span>
       <span>剩余池 <strong>${State.remaining()}</strong> / 1024</span>
       <span>选中 <strong>${selectedIdx >= 0 ? '#' + (selectedIdx + 1) : '—'}</strong></span>
     `;

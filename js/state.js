@@ -1,10 +1,10 @@
 // js/state.js — localStorage 状态管理
-// 存储格式：lottery:drawn:v1 = [{ era, hex, prize, time }, ...]
+// 存储格式：lottery:drawn:v2 = [{ era, hex, prize, time }, ...]
 
 (function (global) {
   'use strict';
 
-  const KEY = 'lottery:drawn:v1';
+  const KEY = 'lottery:drawn:v2';
 
   function load() {
     try {

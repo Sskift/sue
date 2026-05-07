@@ -30,7 +30,7 @@ open -na "Google Chrome" --args --new-window --window-size=1800,1000 "file:///Us
 |------|------|
 | **快捷键** | 在主页面按 **A** 键，跳到后台 `admin.html` |
 | **直接访问** | 浏览器地址栏手动打 `admin.html`（或 `file://.../sue/admin.html`） |
-| **DevTools** | F12 → Application 标签 → Storage → Local Storage → key `lottery:drawn:v1`，能直接看到 JSON 原始数据 |
+| **DevTools** | F12 → Application 标签 → Storage → Local Storage → key `lottery:drawn:v2`，能直接看到 JSON 原始数据 |
 
 ### 后台功能（全键盘操作）
 - **↑ / ↓**：选择条目（选中行有青色高亮 + 外框）
@@ -47,8 +47,8 @@ open -na "Google Chrome" --args --new-window --window-size=1800,1000 "file:///Us
 2. 需要全自动备份：告诉我，我可以做成「每次归档后自动下载一次 CSV」
 
 ### localStorage 数据位置
-- key: `lottery:drawn:v1`
-- 格式：`[{ era: 'BC'|'AD', hex: 0x1-0x200, prize: 'first'|'second'|'third', time: ISO 字符串 }, ...]`
+- key: `lottery:drawn:v2`
+- 格式：`[{ era: 'BC'|'AD', hex: 0x1-0x200, prize: 'grand'|'first'|'second'|'third', time: ISO 字符串 }, ...]`
 - 跨浏览器标签页共享（同一个 Chrome 配置），关浏览器也在，除非清 Cookie/站点数据
 
 ---
@@ -78,7 +78,7 @@ open -na "Google Chrome" --args --new-window --window-size=1800,1000 "file:///Us
 - 内边距：`padding: clamp(14px, 1.6vh, 20px) clamp(24px, 3vw, 44px)`
 - 颜色：`.btn` 青色描边 / `.btn.primary` 青色实底 / `.btn.violet` 紫色 / `.btn.danger` 红色
 
-### 4. 一等奖大数字
+### 4. 特等奖大数字
 **文件**：`css/lottery.css` 的 `.number-display`
 ```css
 font-size: clamp(44px, 8vw, 128px);   /* 整体大小 */
@@ -117,7 +117,7 @@ promises.push(c.hex[j].stopAt(d, baseDelay + 80 + j * 120));  // 位内三位差
 - 改成「所有格同时停」→ 把 `i * 80` 改 0
 - 改成「位内同时停」→ 把 `j * 120` 改 0
 
-### 9. 粒子（一等奖揭晓后）
+### 9. 粒子（特等奖揭晓后）
 **文件**：`js/single.js` 的 `celebrate()`
 - 粒子数量：`for (let i = 0; i < 120; i++)` 改数字
 - **文件**：`css/lottery.css` 的 `@keyframes fall` 调落下轨迹
@@ -139,12 +139,13 @@ const MAX = 0x200;  // 每侧最大值。总池子 = MAX * 2 = 1024
 
 ```js
 // 查看全部历史
-JSON.parse(localStorage.getItem('lottery:drawn:v1'))
+JSON.parse(localStorage.getItem('lottery:drawn:v2'))
 
 // 查看剩余池大小
 State.remaining()
 
 // 统计各奖项已抽数
+State.count('grand')
 State.count('first')
 State.count('second')
 State.count('third')
@@ -179,7 +180,7 @@ console.log(State.toCSV())
 ```
 sue/
 ├── index.html          主页入口（改按钮、快捷键）
-├── draw-single.html    一等奖页面（改 DOM 结构）
+├── draw-single.html    特等奖页面（改 DOM 结构）
 ├── draw-ten.html       十连抽页面
 ├── admin.html          后台管理（改表格 / 导出逻辑）
 │
@@ -191,6 +192,6 @@ sue/
     ├── hex.js          号码池 & 格式化（改号码范围）
     ├── state.js        localStorage（改存储 key、导出 CSV 格式）
     ├── roller.js       滚动动画（改速度、缓动、时长）
-    ├── single.js       一等奖流程（改阶段逻辑、粒子）
+    ├── single.js       特等奖流程（改阶段逻辑、粒子）
     └── ten.js          十连抽流程（改顺位停止、cell HTML）
 ```

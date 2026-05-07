@@ -8,11 +8,13 @@
   const grid = document.getElementById('grid');
 
   const params = new URLSearchParams(location.search);
-  const prize = params.get('prize') === 'second' ? 'second' : 'third';
-  const prizeLabel = prize === 'second' ? '二等奖' : '三等奖';
+  const validPrizes = ['first', 'second', 'third'];
+  const prize = validPrizes.includes(params.get('prize')) ? params.get('prize') : 'first';
+  const prizeLabels = { first: '一等奖', second: '二等奖', third: '三等奖' };
+  const prizeLabel = prizeLabels[prize];
   document.getElementById('prize-label').textContent = prizeLabel;
 
-  // 三等奖编号跨轮累计（01-10 → 11-20 → 21-30），二等奖固定 01-10
+  // 三等奖编号跨轮累计（01-10 → 11-20），一/二等奖固定 01-10
   // 初始构建一次，之后只就地更新 data-idx，不重建 DOM 以避免闪烁
   const INITIAL_DIGITS = [0x7, 0xE, 0xA];
   const cells = [];
@@ -138,7 +140,7 @@
       tasks.push({ reel: c.hex[2], target: INITIAL_DIGITS[2] });
     });
     Roller.resetReels(tasks).then(() => {
-      // 三等奖：就地更新 data-idx 到下一段编号（11-20 / 21-30），不重建 DOM
+      // 三等奖：就地更新 data-idx 到下一段编号（11-20），不重建 DOM
       if (prize === 'third') {
         updateCellIndices();
       }

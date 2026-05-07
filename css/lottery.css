@@ -36,7 +36,7 @@
   100% { filter: brightness(1); }
 }
 
-/* === 一等奖大号显示 === */
+/* === 特等奖大号显示 === */
 .number-display {
   display: flex;
   align-items: center;
@@ -233,7 +233,8 @@
   top: 0;
   background: rgba(5, 6, 26, 0.95);
 }
-.history td.prize-first { color: var(--neon-pink); font-weight: 700; }
+.history td.prize-grand { color: var(--neon-pink); font-weight: 700; }
+.history td.prize-first { color: var(--neon-violet); font-weight: 700; }
 .history td.prize-second { color: var(--neon-cyan); font-weight: 700; }
 .history td.prize-third { color: var(--text); }
 

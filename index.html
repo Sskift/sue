@@ -46,31 +46,41 @@ return love;
   function updateStatus() {
     const total = 1024;
     const remain = State.remaining();
+    const grand = State.count('grand');
     const first = State.count('first');
     const second = State.count('second');
     const third = State.count('third');
     document.getElementById('pool-status').textContent =
-      `// pool: ${remain} / ${total} remaining · drawn: 一=${first}/2 · 二=${second}/10 · 三=${third}/30`;
+      `// pool: ${remain} / ${total} remaining · drawn: 特=${grand}/2 · 一=${first}/10 · 二=${second}/10 · 三=${third}/20`;
   }
   updateStatus();
   window.addEventListener('storage', updateStatus);
   window.addEventListener('focus', updateStatus);
 
   Manual.init([
-    { keys: ['1'], desc: '进入一等奖抽奖' },
+    { keys: ['0'], desc: '进入特等奖抽奖' },
+    { keys: ['1'], desc: '进入一等奖抽奖（十连）' },
     { keys: ['2'], desc: '进入二等奖抽奖（十连）' },
     { keys: ['3'], desc: '进入三等奖抽奖（十连）' },
     { keys: ['A'], desc: '进入历史记录（后台管理 / 导出 / 重置）' },
     { keys: ['H'], desc: '显示本手册（再按一次关闭）' },
   ], [
     {
-      title: '一等奖流程 · 共 2 名（每名 1 次）',
+      title: '特等奖流程 · 共 2 名（每名 1 次）',
       steps: [
-        '主页 <kbd>1</kbd> → 进入一等奖页',
+        '主页 <kbd>0</kbd> → 进入特等奖页',
         '<kbd>Space</kbd> 开始方向滚动 → 再按 <kbd>Space</kbd> 定格「前/后」，之后自动进入年份阶段',
         '<kbd>Space</kbd> 开始年份滚动 → 再按 <kbd>Space</kbd> 定格三位十六进制（号码自动入库）',
         '<kbd>Enter</kbd> 进入归零过渡，准备抽第 2 名',
-        '重复一次以上步骤，2 名一等奖完成',
+        '重复一次以上步骤，2 名特等奖完成',
+      ],
+    },
+    {
+      title: '一等奖流程 · 共 10 名（1 轮十连）',
+      steps: [
+        '主页 <kbd>1</kbd> → 进入一等奖十连页',
+        '<kbd>Space</kbd> 开始滚动（10 格同时）→ 再按 <kbd>Space</kbd> 依次定格',
+        '<kbd>Enter</kbd> 归档本轮 10 个号码，过渡归零，一等奖完成',
       ],
     },
     {
@@ -82,12 +92,11 @@ return love;
       ],
     },
     {
-      title: '三等奖流程 · 共 30 名（3 轮十连，编号 01-30 累计）',
+      title: '三等奖流程 · 共 20 名（2 轮十连，编号 01-20 累计）',
       steps: [
         '主页 <kbd>3</kbd> → 进入三等奖十连页（本轮编号 01-10）',
         '<kbd>Space</kbd> 开始 → <kbd>Space</kbd> 定格 → <kbd>Enter</kbd> 归档',
-        '过渡归零后自动进入下一轮（编号 11-20） → 再按 <kbd>3</kbd> 返回即可，或直接按 <kbd>Space</kbd> 继续',
-        '重复第 2 轮 → 第 3 轮（编号 21-30），合计 30 人',
+        '过渡归零后自动进入下一轮（编号 11-20），合计 20 人',
       ],
     },
     {
@@ -100,7 +109,8 @@ return love;
   ]);
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === '1') location.href = 'draw-single.html';
+    if (e.key === '0') location.href = 'draw-single.html';
+    else if (e.key === '1') location.href = 'draw-ten.html?prize=first';
     else if (e.key === '2') location.href = 'draw-ten.html?prize=second';
     else if (e.key === '3') location.href = 'draw-ten.html?prize=third';
     else if (e.key === 'a' || e.key === 'A') location.href = 'admin.html';
